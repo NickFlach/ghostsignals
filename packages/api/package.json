@@ -1,0 +1,29 @@
+{
+  "name": "@ghostsignals/api",
+  "version": "0.1.0",
+  "description": "REST API and WebSocket server for ghostsignals prediction markets",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.ts",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@ghostsignals/core": "workspace:*",
+    "@ghostsignals/hedge-engine": "workspace:*",
+    "@ghostsignals/price-oracle": "workspace:*",
+    "@ghostsignals/signal-processor": "workspace:*",
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.8.0",
+    "ws": "^8.16.0",
+    "decimal.js": "^10.4.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.5.10",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
