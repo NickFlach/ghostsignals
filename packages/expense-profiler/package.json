@@ -1,0 +1,38 @@
+{
+  "name": "@ghostsignals/expense-profiler",
+  "version": "0.1.0",
+  "description": "Privacy-first local expense categorization using ghostvector WASM",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "lint": "eslint src",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@ghostsignals/core": "workspace:*",
+    "@ghostsignals/hedge-engine": "workspace:*",
+    "decimal.js": "^10.4.3",
+    "zod": "^3.24.1",
+    "csv-parser": "^3.0.0",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}

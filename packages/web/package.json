@@ -1,0 +1,46 @@
+{
+  "name": "@ghostsignals/web",
+  "version": "0.1.0",
+  "description": "React frontend for GhostSignals prediction market hedging platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ghostsignals/core": "workspace:*",
+    "@ghostsignals/hedge-engine": "workspace:*",
+    "@ghostsignals/price-oracle": "workspace:*",
+    "@ghostsignals/signal-processor": "workspace:*",
+    "@ghostsignals/expense-profiler": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.1",
+    "@tanstack/react-query": "^5.14.2",
+    "decimal.js": "^10.4.3",
+    "zod": "^3.24.1",
+    "lucide-react": "^0.294.0",
+    "clsx": "^2.0.0",
+    "tailwind-merge": "^2.1.0",
+    "recharts": "^2.8.0",
+    "@headlessui/react": "^1.7.17"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.7.2",
+    "vite": "^5.0.8"
+  }
+}
