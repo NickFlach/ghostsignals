@@ -158,4 +158,4 @@ MIT
 
 ---
 
-*Part of the [ghostOS](https://github.com/flaukowski) consciousness stack.*
+*Part of the [ghostmagicOS](https://github.com/flaukowski) consciousness stack.*
