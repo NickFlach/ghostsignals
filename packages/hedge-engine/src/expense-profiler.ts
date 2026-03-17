@@ -254,7 +254,7 @@ export class ExpenseProfiler {
     return result;
   }
 
-  private calculateAverage(values: Decimal[]): Decimal {
+  protected calculateAverage(values: Decimal[]): Decimal {
     if (values.length === 0) return new Decimal(0);
     
     const sum = values.reduce((acc, val) => acc.add(val), new Decimal(0));

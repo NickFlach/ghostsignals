@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Shield, TrendingUp, TrendingDown, RefreshCw, Plus, Minus, PieChart, AlertTriangle } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, TrendingUp, RefreshCw, Plus, Minus, PieChart, AlertTriangle } from 'lucide-react';
 
 interface Position {
   marketId: string;
@@ -58,7 +58,7 @@ const mockBasket: BasketData = {
 
 const rebalanceRecommendation = {
   recommendRebalance: true,
-  urgency: 'medium' as const,
+  urgency: 'medium' as 'low' | 'medium' | 'high',
   reason: 'Housing position drift exceeds threshold (4.0%). Energy overweight by 2%.',
   projectedImprovement: 0.04,
   estimatedCost: 12.50,

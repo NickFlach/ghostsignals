@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, Filter, TrendingUp, TrendingDown, Clock, MapPin } from 'lucide-react';
+import { useState } from 'react';
+import { Search, Filter, Clock, MapPin } from 'lucide-react';
 
 export default function MarketBrowser() {
   const [selectedCategory, setSelectedCategory] = useState('all');

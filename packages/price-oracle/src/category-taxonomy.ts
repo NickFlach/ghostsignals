@@ -1,4 +1,4 @@
-import { CategoryNode } from './schemas.js';
+import { CategoryNode, CategoryNodeSchema } from './schemas.js';
 import { MarketCategory } from '@ghostsignals/core';
 import Decimal from 'decimal.js';
 
@@ -91,7 +91,8 @@ export class CategoryTaxonomy {
   /**
    * Add a new category to the taxonomy
    */
-  addCategory(category: CategoryNode): void {
+  addCategory(input: Omit<CategoryNode, 'weight'> & { weight?: Decimal }): void {
+    const category = CategoryNodeSchema.parse({ weight: new Decimal(1), ...input }) as CategoryNode;
     // Validate parent exists if specified
     if (category.parentId && !this.nodes.has(category.parentId)) {
       throw new Error(`Parent category ${category.parentId} not found`);

@@ -125,12 +125,12 @@ export class SignalProcessor {
     // Calculate spread efficiency
     const avgSpread = quotes.reduce((sum, q) => sum.add(q.spread), new Decimal(0))
       .div(quotes.length);
-    const spreadScore = new Decimal(1).sub(avgSpread.div(10)).max(0); // Lower spread = higher score
+    const spreadScore = Decimal.max(new Decimal(1).sub(avgSpread.div(10)), new Decimal(0)); // Lower spread = higher score
 
     // Calculate liquidity efficiency  
     const avgLiquidity = quotes.reduce((sum, q) => sum.add(q.liquidity), new Decimal(0))
       .div(quotes.length);
-    const liquidityScore = avgLiquidity.div(1000).min(1); // Normalize to 0-1
+    const liquidityScore = Decimal.min(avgLiquidity.div(1000), new Decimal(1)); // Normalize to 0-1
 
     // Estimate price impact (simplified)
     const priceImpactScore = new Decimal(0.8); // Would calculate from actual trade data

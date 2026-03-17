@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingUp, TrendingDown, DollarSign, Shield, Activity, AlertCircle } from 'lucide-react';
 
 export default function Dashboard() {

@@ -31,10 +31,11 @@ export function createBasketRoutes(ctx: AppContext) {
       // Create expense profile from transactions
       const transactions = (data.transactions || []).map(t => ({
         date: new Date(t.date),
-        amount: t.amount,
+        amount: new Decimal(t.amount),
         description: t.description,
         category: t.category,
         merchant: t.merchant,
+        isIncome: t.amount < 0 ? false : (t as any).isIncome ?? false,
       }));
 
       const profile = ctx.hedgeEngine.createExpenseProfile(

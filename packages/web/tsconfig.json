@@ -26,12 +26,5 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
-  "references": [
-    { "path": "../core" },
-    { "path": "../hedge-engine" },
-    { "path": "../price-oracle" },
-    { "path": "../signal-processor" },
-    { "path": "../expense-profiler" }
-  ]
+  "include": ["src"]
 }

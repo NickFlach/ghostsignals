@@ -58,7 +58,7 @@ contract HedgeVault is Ownable, ReentrancyGuard {
 
     // State variables
     mapping(address => uint256[]) public userBaskets;
-    mapping(address => HedgingBasket) public baskets; // basketId -> basket
+    mapping(uint256 => HedgingBasket) public baskets; // basketId -> basket
     mapping(address => uint256) public userCollateral;
     mapping(address => uint256) public basketCounter;
 

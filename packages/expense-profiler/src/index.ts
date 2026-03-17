@@ -326,7 +326,7 @@ export class LocalExpenseProfiler extends ExpenseProfiler {
     return intersection.size / union.size;
   }
 
-  private calculateAverage(amounts: Decimal[]): Decimal {
+  protected calculateAverage(amounts: Decimal[]): Decimal {
     if (amounts.length === 0) return new Decimal(0);
     
     const sum = amounts.reduce((acc, amount) => acc.add(amount), new Decimal(0));
@@ -334,4 +334,5 @@ export class LocalExpenseProfiler extends ExpenseProfiler {
   }
 }
 
-export { ExpenseCategory, ExpenseProfiler, ImportedTransaction } from '@ghostsignals/hedge-engine';
+export { ExpenseProfiler } from '@ghostsignals/hedge-engine';
+export type { ExpenseCategory, ImportedTransaction } from '@ghostsignals/hedge-engine';

@@ -26,7 +26,7 @@ export const PriceIndexPointSchema = z.object({
   timestamp: z.date(),
   confidence: DecimalSchema,
   observationCount: z.number(),
-  method: z.enum(['median', 'weighted_average', 'geometric_mean']),
+  method: z.enum(['median', 'mean', 'weighted_mean', 'weighted_average', 'geometric_mean']),
   volatility: DecimalSchema.optional(),
   outlierCount: z.number().default(0),
   embedding: z.array(z.number()).optional() // ghostvector embedding

@@ -13,21 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "baseUrl": ".",
-    "paths": {
-      "@ghostsignals/core": ["./packages/core/src"],
-      "@ghostsignals/core/*": ["./packages/core/src/*"],
-      "@ghostsignals/hedge-engine": ["./packages/hedge-engine/src"],
-      "@ghostsignals/hedge-engine/*": ["./packages/hedge-engine/src/*"],
-      "@ghostsignals/price-oracle": ["./packages/price-oracle/src"],
-      "@ghostsignals/price-oracle/*": ["./packages/price-oracle/src/*"],
-      "@ghostsignals/signal-processor": ["./packages/signal-processor/src"],
-      "@ghostsignals/signal-processor/*": ["./packages/signal-processor/src/*"],
-      "@ghostsignals/expense-profiler": ["./packages/expense-profiler/src"],
-      "@ghostsignals/expense-profiler/*": ["./packages/expense-profiler/src/*"],
-      "@ghostsignals/contracts": ["./packages/contracts/src"],
-      "@ghostsignals/contracts/*": ["./packages/contracts/src/*"]
-    }
+    "baseUrl": "."
   },
   "include": [
     "**/*.ts",
