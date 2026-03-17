@@ -33,7 +33,7 @@ export function createBasketRoutes(ctx: AppContext) {
         date: new Date(t.date),
         amount: new Decimal(t.amount),
         description: t.description,
-        category: t.category,
+        category: t.category as any,
         merchant: t.merchant,
         isIncome: t.amount < 0 ? false : (t as any).isIncome ?? false,
       }));
