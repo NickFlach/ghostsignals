@@ -10,7 +10,7 @@ export const PriceObservationSchema = z.object({
   value: DecimalSchema,
   timestamp: z.date(),
   source: z.string(), // Data provider ID
-  confidence: z.number().min(0).max(1).default(0.8),
+  confidence: DecimalSchema.default(new Decimal(0.8)),
   metadata: z.record(z.unknown()).optional(),
   unitOfMeasure: z.string().optional(), // "USD per lb", "USD per gallon", etc.
   raw: z.unknown().optional() // Original data for debugging

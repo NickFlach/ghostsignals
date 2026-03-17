@@ -86,7 +86,7 @@ export class LocalExpenseProfiler extends ExpenseProfiler {
     if (desc.includes('electric') || desc.includes('power') || desc.includes('utility')) {
       return 'electricity';
     }
-    if (desc.includes('gas') && !desc.includes('gasoline')) {
+    if (desc.includes('natural gas') || (desc.includes('gas') && !desc.includes('gasoline') && !desc.includes('gas station'))) {
       return 'gas';
     }
     if (desc.includes('water') || desc.includes('sewer') || desc.includes('utility')) {
