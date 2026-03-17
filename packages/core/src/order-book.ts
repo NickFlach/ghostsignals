@@ -157,10 +157,11 @@ export class OrderBook {
     const trades: Trade[] = [];
     let remainingQuantity = order.quantity;
     
-    // Get opposing orders
+    // Only buy orders actively cross against resting sells.
+    // Sell orders rest on the book and wait for incoming buys.
     const opposingOrders = order.type === 'buy' 
       ? this.getMatchingAskOrders(order.price)
-      : this.getMatchingBidOrders(order.price);
+      : [];
 
     for (const opposingOrder of opposingOrders) {
       if (remainingQuantity.lte(0)) break;
@@ -195,6 +196,9 @@ export class OrderBook {
         opposingOrder.status = 'partial';
       }
       opposingOrder.updatedAt = new Date();
+
+      // Sync status back to the orders map so cancelOrder sees the update
+      this.orders.set(opposingOrder.id, opposingOrder);
     }
 
     // Create remaining order if needed

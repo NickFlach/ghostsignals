@@ -20,9 +20,11 @@ import { Outcome } from './schemas.js';
 
 export class LMSREngine {
   private liquidityParameter: Decimal;
+  private spreadFee: Decimal;
 
-  constructor(liquidityParameter: Decimal) {
+  constructor(liquidityParameter: Decimal, spreadFee: Decimal = new Decimal('0.01')) {
     this.liquidityParameter = liquidityParameter;
+    this.spreadFee = spreadFee; // fraction deducted from sell payouts to prevent arbitrage
   }
 
   /**
@@ -106,7 +108,9 @@ export class LMSREngine {
 
     const currentCost = this.costFunction(currentShares);
     const newCost = this.costFunction(newShares);
-    const payout = currentCost.sub(newCost);
+    // Apply spread fee to prevent round-trip arbitrage
+    const rawPayout = currentCost.sub(newCost);
+    const payout = rawPayout.mul(new Decimal(1).sub(this.spreadFee));
 
     // Calculate new outcomes with updated shares
     const newOutcomes = outcomes.map((outcome, i) => ({
@@ -165,8 +169,8 @@ export class LMSREngine {
    * Validate that all probabilities sum to 1 (within tolerance)
    */
   validateProbabilities(outcomes: Outcome[], tolerance: Decimal = new Decimal('0.001')): boolean {
-    const prices = this.calculatePrices(outcomes);
-    const sum = prices.reduce((acc, price) => acc.add(price), new Decimal(0));
+    // Validate the stored probability values (not computed prices)
+    const sum = outcomes.reduce((acc, o) => acc.add(o.probability), new Decimal(0));
     return sum.sub(1).abs().lte(tolerance);
   }
 
