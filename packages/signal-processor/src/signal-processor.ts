@@ -235,7 +235,8 @@ export class SignalProcessor {
     const latest = quotes[quotes.length - 1];
     const previous = quotes[quotes.length - 2];
 
-    // Calculate price change
+    // Calculate price change (guard against zero previous price)
+    if (previous.ammBuyPrice.eq(0)) return [];
     const priceChange = latest.ammBuyPrice.sub(previous.ammBuyPrice)
       .div(previous.ammBuyPrice);
 
@@ -278,11 +279,7 @@ export class SignalProcessor {
     const signals1 = this.marketSignals.get(market1.id) || [];
     const signals2 = this.marketSignals.get(market2.id) || [];
 
-    if (signals1.length === 0 || signals2.length === 0) {
-      return new Decimal(0);
-    }
-
-    // Use ghostvector to calculate embedding similarity
+    // Use ghostvector to calculate embedding similarity if signals exist
     if (this.ghostvectorClient && signals1.length > 0 && signals2.length > 0) {
       const embedding1 = signals1[signals1.length - 1].embedding;
       const embedding2 = signals2[signals2.length - 1].embedding;
@@ -342,7 +339,7 @@ export class SignalProcessor {
   }
 
   private calculateCosineSimilarity(embedding1: number[], embedding2: number[]): number {
-    if (embedding1.length !== embedding2.length) return 0;
+    if (embedding1.length === 0 || embedding1.length !== embedding2.length) return 0;
 
     let dotProduct = 0;
     let norm1 = 0;

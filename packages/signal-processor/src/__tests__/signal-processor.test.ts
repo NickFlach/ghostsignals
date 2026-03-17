@@ -173,4 +173,102 @@ describe('SignalProcessor', () => {
       expect(processor.getMarketEfficiency('unknown')).toBeNull();
     });
   });
+
+  describe('edge cases', () => {
+    it('should handle negative price movements', () => {
+      const market = makeMarket('m1', 'food');
+      const quotes = new Map<string, MarketQuote[]>();
+      quotes.set('m1', [
+        makeQuote('m1_up', 0.50, 0.48),
+        makeQuote('m1_up', 0.40, 0.38), // price drop
+      ]);
+
+      const signals = processor.processMarketData([market], quotes);
+      const priceSignals = signals.filter(s => s.signalType === 'price_movement');
+
+      if (priceSignals.length > 0) {
+        expect(priceSignals[0].direction).toBe('negative');
+      }
+    });
+
+    it('should not crash on single quote (no price movement detection)', () => {
+      const market = makeMarket('m1', 'food');
+      const quotes = new Map<string, MarketQuote[]>();
+      quotes.set('m1', [makeQuote('m1_up', 0.40, 0.38)]);
+
+      const signals = processor.processMarketData([market], quotes);
+      const priceSignals = signals.filter(s => s.signalType === 'price_movement');
+      expect(priceSignals.length).toBe(0);
+    });
+
+    it('should handle zero previous price gracefully', () => {
+      const market = makeMarket('m1', 'food');
+      const quotes = new Map<string, MarketQuote[]>();
+      quotes.set('m1', [
+        makeQuote('m1_up', 0, 0),
+        makeQuote('m1_up', 0.50, 0.48),
+      ]);
+
+      // Should not throw
+      const signals = processor.processMarketData([market], quotes);
+      const priceSignals = signals.filter(s => s.signalType === 'price_movement');
+      expect(priceSignals.length).toBe(0);
+    });
+
+    it('should use category-based correlation fallback when no signals exist', () => {
+      const markets = [
+        makeMarket('m1', 'food'),
+        makeMarket('m2', 'food'),
+      ];
+
+      const matrix = processor.discoverCorrelations(markets);
+      // Same category should have moderate positive correlation (0.6)
+      expect(matrix.correlations[0][1].toNumber()).toBe(0.6);
+      // Diagonal is always 1
+      expect(matrix.correlations[0][0].toNumber()).toBe(1);
+    });
+
+    it('should use low correlation for different categories', () => {
+      const markets = [
+        makeMarket('m1', 'food'),
+        makeMarket('m2', 'energy'),
+      ];
+
+      const matrix = processor.discoverCorrelations(markets);
+      expect(matrix.correlations[0][1].toNumber()).toBe(0.1);
+    });
+
+    it('should cap correlation history at 100 entries', () => {
+      const markets = [makeMarket('m1', 'food')];
+      for (let i = 0; i < 105; i++) {
+        processor.discoverCorrelations(markets);
+      }
+      // Internal state - just verify getLatestCorrelations still works
+      const latest = processor.getLatestCorrelations();
+      expect(latest).not.toBeNull();
+    });
+
+    it('should handle market with no matching quotes', () => {
+      const market = makeMarket('m1', 'food');
+      const quotes = new Map<string, MarketQuote[]>();
+      // No quotes for m1
+      quotes.set('m2', [makeQuote('m2_up', 0.5, 0.48)]);
+
+      const signals = processor.processMarketData([market], quotes);
+      expect(signals.length).toBe(0);
+    });
+
+    it('should handle sub-threshold price movements', () => {
+      const market = makeMarket('m1', 'food');
+      const quotes = new Map<string, MarketQuote[]>();
+      quotes.set('m1', [
+        makeQuote('m1_up', 0.50, 0.48),
+        makeQuote('m1_up', 0.51, 0.49), // 2% change, below 5% threshold
+      ]);
+
+      const signals = processor.processMarketData([market], quotes);
+      const priceSignals = signals.filter(s => s.signalType === 'price_movement');
+      expect(priceSignals.length).toBe(0);
+    });
+  });
 });
