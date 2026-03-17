@@ -112,9 +112,12 @@ export class PortfolioOptimizer {
     hedgedVolatility: Decimal
   ): Decimal {
     if (unhedgedVolatility.lte(0)) return new Decimal(0);
+    if (hedgedVolatility.lt(0)) return new Decimal(1); // Negative vol is nonsensical, treat as perfect hedge
     
     const ratio = hedgedVolatility.div(unhedgedVolatility);
-    return new Decimal(1).sub(ratio);
+    // Clamp to [0, 1] — score below 0 means hedging increased volatility
+    const score = new Decimal(1).sub(ratio);
+    return Decimal.max(new Decimal(0), Decimal.min(new Decimal(1), score));
   }
 
   /**

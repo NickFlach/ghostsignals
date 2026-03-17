@@ -128,6 +128,21 @@ describe('PortfolioOptimizer', () => {
       const score = optimizer.calculateStabilityScore(new Decimal(1), new Decimal(0));
       expect(score.toNumber()).toBe(1);
     });
+
+    it('should clamp to 0 when hedging increases volatility', () => {
+      const score = optimizer.calculateStabilityScore(new Decimal(1), new Decimal(2));
+      expect(score.toNumber()).toBe(0);
+    });
+
+    it('should clamp to 1 for negative hedged volatility', () => {
+      const score = optimizer.calculateStabilityScore(new Decimal(1), new Decimal(-0.5));
+      expect(score.toNumber()).toBe(1);
+    });
+
+    it('should handle very small unhedged volatility', () => {
+      const score = optimizer.calculateStabilityScore(new Decimal('0.0001'), new Decimal('0.00005'));
+      expect(score.toNumber()).toBe(0.5);
+    });
   });
 
   describe('rebalanceBasket', () => {
@@ -170,6 +185,75 @@ describe('PortfolioOptimizer', () => {
       });
 
       expect(result.positions.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle single-expense profile', () => {
+      const singleExpenseProfile: ExpenseProfile = {
+        ...profile,
+        expenses: [profile.expenses[0]],
+        totalMonthlyExpenses: new Decimal(600),
+      };
+      const markets = [makeMarketData(makeMarket('m1', 'food', 'us-west'))];
+      const result = optimizer.optimizeBasket(singleExpenseProfile, markets, {
+        maxPositionsPerCategory: 3,
+        minPositionSize: new Decimal(10),
+        maxPositionSize: new Decimal(1000),
+        maxConcentration: 0.3,
+        targetVolatilityReduction: 0.5,
+        rebalanceCostThreshold: new Decimal(5),
+      });
+      expect(result.positions.length).toBeGreaterThan(0);
+      expect(result.totalCost.lte(singleExpenseProfile.hedgingBudget)).toBe(true);
+    });
+
+    it('should handle zero hedging budget gracefully', () => {
+      const zeroBudget: ExpenseProfile = {
+        ...profile,
+        hedgingBudget: new Decimal(0),
+      };
+      const markets = [makeMarketData(makeMarket('m1', 'food', 'us-west'))];
+      const result = optimizer.optimizeBasket(zeroBudget, markets, {
+        maxPositionsPerCategory: 3,
+        minPositionSize: new Decimal(10),
+        maxPositionSize: new Decimal(1000),
+        maxConcentration: 0.3,
+        targetVolatilityReduction: 0.5,
+        rebalanceCostThreshold: new Decimal(5),
+      });
+      // With zero budget, no positions should be feasible
+      expect(result.positions.length).toBe(0);
+    });
+
+    it('should handle markets with zero correlation', () => {
+      const uncorrelatedMarket: MarketData = {
+        ...makeMarketData(makeMarket('m1', 'food', 'us-west')),
+        correlationWithCategory: new Map([['food' as any, new Decimal(0)]]),
+      };
+      const result = optimizer.optimizeBasket(profile, [uncorrelatedMarket], {
+        maxPositionsPerCategory: 3,
+        minPositionSize: new Decimal(10),
+        maxPositionSize: new Decimal(1000),
+        maxConcentration: 0.3,
+        targetVolatilityReduction: 0.5,
+        rebalanceCostThreshold: new Decimal(5),
+      });
+      // Zero correlation should be filtered out (below 0.1 threshold)
+      expect(result.positions.length).toBe(0);
+    });
+
+    it('should handle very small min position size', () => {
+      const markets = [makeMarketData(makeMarket('m1', 'food', 'us-west'))];
+      const result = optimizer.optimizeBasket(profile, markets, {
+        maxPositionsPerCategory: 3,
+        minPositionSize: new Decimal('0.01'),
+        maxPositionSize: new Decimal(1000),
+        maxConcentration: 0.3,
+        targetVolatilityReduction: 0.5,
+        rebalanceCostThreshold: new Decimal(5),
+      });
+      expect(result.feasible || result.positions.length === 0).toBe(true);
     });
   });
 });
